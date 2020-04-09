@@ -1,6 +1,7 @@
 import React from 'react';
 import { reactCreateElement } from '../src/reactCreateElement';
 import { createChildren } from '../src/createChildren';
+import { ElementNode } from '../src';
 
 jest.mock('../src/createChildren');
 
@@ -52,4 +53,60 @@ describe('reactCreateElement', () => {
     expectChildrenArgument(mockChildren);
     expect(mockCreateChildren).toHaveBeenCalledWith(node.children);
   });
+  describe('should not use children for void elements', () => {
+    it('node.children', () => {
+      const childCreator = jest.fn().mockReturnValue([]);
+      const voidNode:ElementNode = {
+        children:[],
+        tagName:'img',
+        properties:{className:[]},
+        type:'element'
+      }
+      reactCreateElement(
+        voidNode,
+        {className:''},
+        key,
+        childCreator
+      );
+      const reactCreateElementCall = mockReactCreateElement.mock.calls[0];
+      expect(reactCreateElementCall[2]).toBeUndefined();
+      expect(childCreator).not.toBeCalled();
+    })
+    it('props.children', () => {
+      const childCreator = jest.fn().mockReturnValue([]);
+      const voidNode:ElementNode = {
+        children:[],
+        tagName:'img',
+        properties:{className:[]},
+        type:'element'
+      }
+      reactCreateElement(
+        voidNode,
+        {className:'', children:[]},
+        key,
+        childCreator
+      );
+      const reactCreateElementCall = mockReactCreateElement.mock.calls[0];
+      expect(reactCreateElementCall[2]).toBeUndefined()
+      expect(childCreator).not.toHaveBeenCalled();
+    })
+  })
+  it('should only pass key props to React Fragment', () => {
+    const childCreator = jest.fn().mockReturnValue([]);
+      const voidNode:ElementNode = {
+        children:[],
+        tagName:React.Fragment,
+        properties:{className:[]},
+        type:'element'
+      }
+      reactCreateElement(
+        voidNode,
+        {className:''},
+        key,
+        childCreator
+      );
+      const reactCreateElementCall = mockReactCreateElement.mock.calls[0];
+      expect(reactCreateElementCall[1]).toEqual({key});
+      expect(childCreator).toHaveBeenCalled();
+  })
 });
