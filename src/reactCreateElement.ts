@@ -2,6 +2,17 @@ import React from 'react';
 import * as ReactIs from "react-is";
 import { ElementNode, RenderNode } from './index';
 
+const voidElements = ['area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
+function isVoidElement(tagName:string):boolean{
+  return voidElements.indexOf(tagName)!==-1;
+}
+function shouldProcessChildren(tagName:ElementNode['tagName']):boolean{
+  let processChildren = true;
+  if(typeof tagName ==='string'&&isVoidElement(tagName)){
+    processChildren = false;
+  }
+  return processChildren;
+}
 
 export function reactCreateElement(
   node: ElementNode,
@@ -26,6 +37,10 @@ export function reactCreateElement(
   return React.createElement(
     TagName,
     { key, ...props },
-    children || childrenCreator(node.children)
+    shouldProcessChildren(TagName)?(children || childrenCreator(node.children)):undefined
   );
 }
+
+
+
+
