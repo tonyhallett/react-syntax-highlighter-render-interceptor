@@ -8,7 +8,7 @@ export {
 export type RenderNode = ElementNode | TextNode;
 export interface ElementNode {
   type: 'element';
-  tagName: React.FunctionComponent | React.ComponentClass | string;
+  tagName: React.ComponentType | string;
   properties: {
     className: Array<string>;
     style?: React.CSSProperties;
