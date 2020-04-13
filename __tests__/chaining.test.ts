@@ -51,6 +51,17 @@ describe('chaining', () => {
         backgroundColor: 'orange',
       });
     });
+    it('should not throw if style creator is undefined', () => {
+      const chainedStyleCreator = createChainedStyleCreator(undefined);
+      expect(() =>
+        chainedStyleCreator({}, [], {
+          type: 'element',
+          properties: { className: [] },
+          children: [],
+          tagName: 'span',
+        })
+      ).not.toThrow();
+    });
   });
   describe('createChainedNodeRenderInterceptor', () => {
     it('should create a node render interceptor that calls each with the defined result of previous', () => {
@@ -101,6 +112,23 @@ describe('chaining', () => {
         expect(chainedNodeRenderDetails).toBeUndefined();
         expect(finalNodeRenderInterceptor).not.toHaveBeenCalled();
       });
+    });
+
+    it('should not throw for undefined NodeRenderInterceptor', () => {
+      const chainedNodeRenderInterceptor = createChainedNodeRenderInterceptor(
+        undefined
+      );
+      expect(() =>
+        chainedNodeRenderInterceptor({
+          key: '0',
+          stylesheet: {},
+          useInlineStyles: true,
+          node: {
+            type: 'text',
+            value: 'some text',
+          },
+        })
+      ).not.toThrow();
     });
   });
 });

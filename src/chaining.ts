@@ -1,7 +1,7 @@
 import { StyleCreator, NodeRenderInterceptor } from './index';
 
 export function createChainedStyleCreator(
-  ...styleCreators: StyleCreator[]
+  ...styleCreators: Array<StyleCreator | undefined>
 ): StyleCreator {
   const chainedStyleCreator: StyleCreator = (
     currentStyle,
@@ -10,8 +10,10 @@ export function createChainedStyleCreator(
   ) => {
     let accumulatedStyle = currentStyle;
     styleCreators.forEach((sc) => {
-      const newStyle = sc(accumulatedStyle, classNames, node);
-      if (newStyle) accumulatedStyle = newStyle;
+      if (sc) {
+        const newStyle = sc(accumulatedStyle, classNames, node);
+        if (newStyle) accumulatedStyle = newStyle;
+      }
     });
     return accumulatedStyle;
   };
@@ -19,20 +21,23 @@ export function createChainedStyleCreator(
 }
 
 export function createChainedNodeRenderInterceptor(
-  ...nodeRenderInterceptors: NodeRenderInterceptor[]
+  ...nodeRenderInterceptors: Array<NodeRenderInterceptor | undefined>
 ): NodeRenderInterceptor {
   const chainedRenderInterceptor: NodeRenderInterceptor = (
     nodeRenderDetails
   ) => {
     let accumulatedNodeRenderDetails = nodeRenderDetails;
     for (let i = 0; i < nodeRenderInterceptors.length; i += 1) {
-      const renderDetails = nodeRenderInterceptors[i](
-        accumulatedNodeRenderDetails
-      );
-      if (renderDetails) {
-        accumulatedNodeRenderDetails = renderDetails;
-      } else {
-        return undefined;
+      const nodeRenderInterceptor = nodeRenderInterceptors[i];
+      if (nodeRenderInterceptor) {
+        const renderDetails = nodeRenderInterceptor(
+          accumulatedNodeRenderDetails
+        );
+        if (renderDetails) {
+          accumulatedNodeRenderDetails = renderDetails;
+        } else {
+          return undefined;
+        }
       }
     }
     return accumulatedNodeRenderDetails;

@@ -180,8 +180,8 @@ The interceptor can also change the values of the style prop which would affect 
 There are two helper functions so that can supply multiple style creators or multiple interceptors each with their own responsibilities.
 
 ```typescript
-function createChainedStyleCreator(...styleCreators:StyleCreator[]):StyleCreator
-function createChainedNodeRenderInterceptor(...nodeRenderInterceptors:NodeRenderInterceptor[]):NodeRenderInterceptor
+function createChainedStyleCreator(...styleCreators:Array<StyleCreator|undefined>):StyleCreator
+function createChainedNodeRenderInterceptor(...nodeRenderInterceptors:Array<NodeRenderInterceptor|undefined>):NodeRenderInterceptor
 ```
 
 All chained style creators are called.  The style passed will be the merged style for the first and for subsequent will be the style returned from the previous style creator.  If a style creator returns undefined/null the last defined style will be passed to the next in the chain.
