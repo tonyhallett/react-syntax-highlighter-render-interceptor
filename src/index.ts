@@ -20,6 +20,7 @@ export interface ElementNode {
 export interface TextNode {
   type: 'text';
   value: string;
+  [index: string]: unknown;
 }
 export interface Stylesheet {
   [key: string]: React.CSSProperties;

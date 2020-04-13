@@ -28,14 +28,15 @@ interface ElementNode{
   properties:{
     className:Array<string>,
     style?:React.CSSProperties,
-    [index:string]:any
+    [index: string]: unknown
   },
   children: Array<RenderNode>,
   [index:string]:any
 }
 interface TextNode{
   type:'text',
-  value:string
+  value:string,
+  [index: string]: unknown
 }
 ```
 react-syntax-highlighter will [call the renderer](https://github.com/conorhastings/react-syntax-highlighter/blob/83ef077a77123bff0d46bb42d515a7d60d46fbff/src/highlight.js#L259) with these nodes and the stylesheet from the style prop and also the useInlineStyles prop value.
