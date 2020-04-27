@@ -24,7 +24,7 @@ Text nodes are rendered as strings from the value property.
 type RenderNode = ElementNode | TextNode;
 interface ElementNode{
   type:'element',
-  tagName:any,
+  tagName:React.ComponentType | string,
   properties:{
     className:Array<string>,
     style?:React.CSSProperties,
