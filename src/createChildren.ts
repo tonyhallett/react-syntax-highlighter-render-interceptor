@@ -1,4 +1,6 @@
 import { createElement } from './createElement';
+import { getDescendantKey } from './keyProvider';
+
 import {
   NodeRenderInterceptor,
   StyleCreator,
@@ -17,7 +19,7 @@ export function createChildren(
     children: Array<RenderNode>
   ): Array<ReturnType<typeof createElement>> => {
     return children.map((child, i) => {
-      const key = `${parentKey}-${i}`;
+      const key = getDescendantKey(parentKey, i);
       return createElement(
         interceptor,
         styleCreator,

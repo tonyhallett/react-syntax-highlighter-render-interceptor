@@ -1,4 +1,5 @@
 import { createElement } from './createElement';
+import { getRootKey } from './keyProvider';
 
 export {
   createChainedNodeRenderInterceptor,
@@ -53,7 +54,7 @@ export function createCustomRenderer(
 ): CustomRenderer {
   return (details: CustomRendererDetails): React.ReactNode[] => {
     return details.rows.map((node, i) => {
-      const key = `code-segment-${i}`;
+      const key = getRootKey(i);
       return createElement(
         interceptor,
         styleCreator,

@@ -7,15 +7,18 @@ import {
   ElementNode,
 } from '../src/index';
 import { createElement } from '../src/createElement';
+import { getRootKey } from '../src/keyProvider';
 import {
   expectToBeArray,
   expectToBeArrayStrict,
 } from '../__test_helpers/expectExtensions';
 jest.mock('../src/createElement');
+jest.mock('../src/keyProvider');
 describe('createCustomRenderer', () => {
   const createdElement1 = {};
   const createdElement2 = {};
   const mockCreateElement = createElement as jest.Mock;
+  const mockGetRootKey = getRootKey as jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -23,6 +26,7 @@ describe('createCustomRenderer', () => {
     mockCreateElement
       .mockReturnValueOnce(createdElement1)
       .mockReturnValueOnce(createdElement2);
+    mockGetRootKey.mockReturnValueOnce('Root1').mockReturnValueOnce('Root2');
   });
   const useInlineStylesOptions = [true, false];
   useInlineStylesOptions.forEach((useInlineStyles) => {
@@ -46,7 +50,7 @@ describe('createCustomRenderer', () => {
         expect(nodeRenderDetails.useInlineStyles).toBe(
           customRendererDetails.useInlineStyles
         );
-        expect(nodeRenderDetails.key).toBe(`code-segment-${isFirst ? 0 : 1}`);
+        expect(nodeRenderDetails.key).toBe(`${isFirst ? 'Root1' : 'Root2'}`);
       }
       const customRenderer = createCustomRenderer(
         styleCreator,
@@ -57,6 +61,8 @@ describe('createCustomRenderer', () => {
       const createElementCalls = mockCreateElement.mock.calls;
       expectCreateElementCall(createElementCalls[0], true);
       expectCreateElementCall(createElementCalls[1], false);
+      expect(getRootKey).toHaveBeenNthCalledWith<[number]>(1, 0);
+      expect(getRootKey).toHaveBeenNthCalledWith<[number]>(2, 1);
     });
   });
   describe('default style creator and node render interceptor', () => {

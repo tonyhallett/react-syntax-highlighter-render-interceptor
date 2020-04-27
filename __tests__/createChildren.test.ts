@@ -1,15 +1,21 @@
 import { createChildren } from '../src/createChildren';
 import { createElement } from '../src/createElement';
+import { getDescendantKey } from '../src/keyProvider';
 import { NodeRenderDetails, TextNode } from '../src';
 
 jest.mock('../src/createElement');
+jest.mock('../src/keyProvider');
 describe('createChildren', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
   [true, false].forEach((useInlineStyles) => {
-    it('should map children with createElement and keys to be parent key - index', () => {
+    it('should map children with createElement and keys from keyProvider getDescendantKey', () => {
       const mockCreateElement = createElement as jest.Mock;
+      const mockGetDescendantKey = getDescendantKey as jest.Mock;
+      mockGetDescendantKey
+        .mockReturnValueOnce('Descendant1')
+        .mockReturnValueOnce('Descendant2');
       mockCreateElement.mockReturnValueOnce(1).mockReturnValueOnce(2);
       const nodeRenderInterceptor = { cat: 'dog' } as any;
       const styleCreator = {} as any;
@@ -45,10 +51,21 @@ describe('createChildren', () => {
         expect(nodeRenderDetails.node).toBe(nodes[index]);
         expect(nodeRenderDetails.stylesheet).toBe(stylesheet);
         expect(nodeRenderDetails.useInlineStyles).toBe(useInlineStyles);
-        expect(nodeRenderDetails.key).toBe(`parent-key-${index}`);
+        const expectedDescendantKey = `Descendant${isFirst ? '1' : '2'}`;
+        expect(nodeRenderDetails.key).toBe(expectedDescendantKey);
 
-        expect(call[3]).toBe(`parent-key-${index}`);
+        expect(call[3]).toBe(expectedDescendantKey);
       }
+      expect(getDescendantKey).toHaveBeenNthCalledWith<[string, number]>(
+        1,
+        'parent-key',
+        0
+      );
+      expect(getDescendantKey).toHaveBeenNthCalledWith<[string, number]>(
+        2,
+        'parent-key',
+        1
+      );
       expectCreateElementCall(true);
       expectCreateElementCall(false);
     });
