@@ -6,6 +6,8 @@ export {
   createChainedStyleCreator,
 } from './chaining';
 
+export { keyIsNextSibling } from './keyProvider'
+
 export type RenderNode = ElementNode | TextNode;
 export interface ElementNode {
   type: 'element';
