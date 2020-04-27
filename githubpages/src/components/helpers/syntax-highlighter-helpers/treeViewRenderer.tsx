@@ -59,7 +59,8 @@ function ElementLabel(props: {
 function createTextNodeTreeItem(key: string, value: string): ElementNode {
   return {
     type: 'element',
-    tagName: TreeItem,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    tagName: TreeItem as any,
     properties: {
       nodeId: key,
       label: <TextLabel value={value} />,
@@ -73,7 +74,8 @@ function mapElementNodeToTreeItem(
   key: string,
   isWrapLines: boolean
 ): void {
-  node.tagName = TreeItem;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  node.tagName = TreeItem as any;
   node.properties = {
     nodeId: key,
     label: (
